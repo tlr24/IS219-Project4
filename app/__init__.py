@@ -27,6 +27,7 @@ def create_app():
         app.config.from_object("app.config.TestingConfig")
 
     login_manager.init_app(app)
+    login_manager.login_view = "auth.login"
     csrf = CSRFProtect(app)
     bootstrap = Bootstrap5(app)
     app.register_blueprint(simple_pages)
