@@ -8,9 +8,17 @@ from werkzeug.utils import secure_filename, redirect
 from app.db import db
 from app.db.models import Song
 from app.songs.forms import csv_upload
+from app import config
 
 song = Blueprint('songs', __name__, template_folder='templates')
 
+@song.before_app_first_request
+def create_upload_folder():
+    root = config.Config.BASE_DIR
+    uploadfolder = os.path.join(root,'..',config.Config.UPLOAD_FOLDER)
+    # make a directory if it doesn't exist
+    if not os.path.exists(uploadfolder):
+        os.mkdir(uploadfolder)
 
 @song.route('/songs/upload', methods=['POST', 'GET'])
 @login_required

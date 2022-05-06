@@ -83,3 +83,11 @@ def test_upload_csv(client, add_user, write_test_csv):
     assert db.session.query(Song).count() == 2
     assert Song.query.filter_by(title="Move (Keep Walkin’)").first() is not None
     assert Song.query.filter_by(title="Edge Of My Seat").first() is not None
+
+def test_create_upload_folder():
+    """Test if uploads folder is being created"""
+    # Uploads folder should be created at start
+    root = os.path.dirname(os.path.abspath(__file__))
+    uploads_dir = os.path.join(root, '../uploads')
+    # check if the directory exists
+    assert os.path.exists(uploads_dir) == True
