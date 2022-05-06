@@ -1,13 +1,29 @@
 """Tests the songs functionality"""
 import pytest
+import os
+import csv
 from app.db.models import db, Song, User
 
 
 @pytest.fixture()
 def add_user_to_db():
-    user = User('a@gmail.com', '12345678', 0)
+    user = User('a@gmail.com', '123La!', 0)
     db.session.add(user)
     db.session.commit()
+
+@pytest.fixture()
+def write_test_csv():
+    # write a dummy csv file for testing
+    header = ['Name', 'Artist', 'Year', 'Genre']
+    data = [
+        ['Move (Keep Walkin’)', "TobyMac", '2015', 'Christian'],
+        ['Edge Of My Seat', "TobyMac", '2018', 'Christian'],
+    ]
+
+    with open('music.csv', 'w', encoding='UTF8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        writer.writerows(data)
 
 def test_adding_songs(application, add_user_to_db):
     """Test adding songs"""
@@ -44,3 +60,26 @@ def test_deleting_song(application, add_user_to_db):
     # delete the song
     db.session.delete(song)
     #assert db.session.query(Song).count() == 0
+
+def test_upload_csv(client, add_user, write_test_csv):
+    """Test uploading and processing a csv file"""
+    # login to be able to upload the csv
+    response = client.post("/login", data={'email': 'a@a.com', 'password': '123La!'})
+
+    file = open("music.csv", 'rb')
+    # upload the csv
+    response = client.post('/songs/upload', data={'file': file})
+    assert "/songs" in response.headers["Location"]
+    assert response.status_code == 302
+
+    root = os.path.dirname(os.path.abspath(__file__))
+    csv_file = os.path.join(root, '../uploads/music.csv')
+    # check that the file was uploaded
+    assert os.path.exists(csv_file) == True
+
+    # test that the csv file was processed and the songs were inserted into the database
+    user = User.query.filter_by(email="a@a.com").first()
+    assert len(user.songs) == 2
+    assert db.session.query(Song).count() == 2
+    assert Song.query.filter_by(title="Move (Keep Walkin’)").first() is not None
+    assert Song.query.filter_by(title="Edge Of My Seat").first() is not None
