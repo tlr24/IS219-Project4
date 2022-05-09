@@ -11,6 +11,7 @@ from app.db.models import User
 from app.simple_pages import simple_pages
 from app.logging_config import log_con, LOGGING_CONFIG
 from app.songs import song
+from app.song_mgmt import song_mgmt
 
 login_manager = flask_login.LoginManager()
 
@@ -37,6 +38,7 @@ def create_app():
     app.register_blueprint(auth)
     app.register_blueprint(log_con)
     app.register_blueprint(song)
+    app.register_blueprint(song_mgmt)
     app.cli.add_command(create_database)
     app.cli.add_command(create_upload_folder)
     app.register_error_handler(404, page_not_found)
