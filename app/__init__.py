@@ -4,6 +4,7 @@ from flask import Flask, render_template
 from flask_bootstrap import Bootstrap5
 from flask_wtf.csrf import CSRFProtect
 import flask_login
+from flask_cors import CORS
 from app.auth import auth
 from app.cli import create_database, create_upload_folder
 from app.db import db, database
@@ -11,6 +12,7 @@ from app.db.models import User
 from app.simple_pages import simple_pages
 from app.logging_config import log_con, LOGGING_CONFIG
 from app.songs import song
+from app.song_mgmt import song_mgmt
 
 login_manager = flask_login.LoginManager()
 
@@ -37,12 +39,16 @@ def create_app():
     app.register_blueprint(auth)
     app.register_blueprint(log_con)
     app.register_blueprint(song)
+    app.register_blueprint(song_mgmt)
+    # add command function to cli commands
     app.cli.add_command(create_database)
     app.cli.add_command(create_upload_folder)
     app.register_error_handler(404, page_not_found)
     db.init_app(app)
-    # add command function to cli commands
-
+    api_v1_cors_config = {
+        "methods": ["OPTIONS", "GET", "POST"],
+    }
+    CORS(app, resources={"/api/*": api_v1_cors_config})
 
     return app
 

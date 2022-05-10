@@ -1,29 +1,7 @@
 """Tests the songs functionality"""
-import pytest
 import os
-import csv
 from app.db.models import db, Song, User
 
-
-@pytest.fixture()
-def add_user_to_db():
-    user = User('a@gmail.com', '123La!', 0)
-    db.session.add(user)
-    db.session.commit()
-
-@pytest.fixture()
-def write_test_csv():
-    # write a dummy csv file for testing
-    header = ['Name', 'Artist', 'Year', 'Genre']
-    data = [
-        ['Move (Keep Walkin’)', "TobyMac", '2015', 'Christian'],
-        ['Edge Of My Seat', "TobyMac", '2018', 'Christian'],
-    ]
-
-    with open('music.csv', 'w', encoding='UTF8', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(header)
-        writer.writerows(data)
 
 def test_adding_songs(application, add_user_to_db):
     """Test adding songs"""
