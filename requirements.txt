@@ -46,3 +46,5 @@ WTForms==3.0.1
 zipp==3.8.0
 rfc3339
 sqlalchemy-serializer
+python-dotenv
+Flask-CORS
