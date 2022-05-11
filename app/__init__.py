@@ -13,6 +13,7 @@ from app.simple_pages import simple_pages
 from app.logging_config import log_con, LOGGING_CONFIG
 from app.songs import song
 from app.song_mgmt import song_mgmt
+from app.user_mgmt import user_mgmt
 
 login_manager = flask_login.LoginManager()
 
@@ -40,6 +41,7 @@ def create_app():
     app.register_blueprint(log_con)
     app.register_blueprint(song)
     app.register_blueprint(song_mgmt)
+    app.register_blueprint(user_mgmt)
     # add command function to cli commands
     app.cli.add_command(create_database)
     app.cli.add_command(create_upload_folder)
