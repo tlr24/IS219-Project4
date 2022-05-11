@@ -5,7 +5,8 @@
     {% block title %}Welcome: {{ current_user.email }}{% endblock %}
     {% block content %}
         <h2>Welcome: {{ current_user.email }}</h2>
-        {{ render_table(data) }}
+        {{ render_table(data,titles,show_actions=True, table_classes='table-striped', header_classes='thead-dark', responsive=True, responsive_class='table-responsive-sm', model=Song,
+            view_url=retrieve_url) }}
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
