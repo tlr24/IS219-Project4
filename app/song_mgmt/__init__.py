@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, url_for, redirect, current_
 from flask_login import login_required, current_user
 from app.db import db
 from app.db.models import Song, song_user
-from app.song_mgmt.forms import add_song_form
+from app.song_mgmt.forms import add_song_form, song_edit_form
 
 
 song_mgmt = Blueprint('song_mgmt', __name__,
@@ -38,3 +38,20 @@ def add_song():
         flash('Song added successfully', 'success')
         return redirect(url_for('songs.browse_songs'), 302)
     return render_template('song_add.html', form=form)
+
+@song_mgmt.route('/song/<int:song_id>/edit', methods=['POST', 'GET'])
+@login_required
+def edit_song(song_id):
+    song = Song.query.get(song_id)
+    form = song_edit_form(obj=song)
+    if form.validate_on_submit():
+        song.title = form.title.data
+        song.artist = form.artist.data
+        song.year = form.year.data
+        song.genre = form.genre.data
+        db.session.add(song)
+        db.session.commit()
+        flash('Song edited successfully', 'success')
+        current_app.logger.info("edited a song")
+        return redirect(url_for('songs.browse_songs'))
+    return render_template('song_edit.html', form=form)

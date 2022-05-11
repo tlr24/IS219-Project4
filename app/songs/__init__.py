@@ -57,8 +57,9 @@ def browse_songs(page):
     retrieve_url = ('song_mgmt.retrieve_song', [('song_id', ':id')])
     delete_url = ('song_mgmt.delete_song', [('song_id', ':id')])
     new_url = 'song_mgmt.add_song'
+    edit_url = ('song_mgmt.edit_song', [('song_id', ':id')])
     data = pagination.items
     try:
-        return render_template('browse_songs.html',data=data,pagination=pagination,retrieve_url=retrieve_url,delete_url=delete_url,new_url=new_url,Song=Song)
+        return render_template('browse_songs.html',data=data,pagination=pagination,retrieve_url=retrieve_url,delete_url=delete_url,new_url=new_url,edit_url=edit_url,Song=Song)
     except TemplateNotFound:
         abort(404)
