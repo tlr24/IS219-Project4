@@ -27,17 +27,41 @@ def test_delete_transaction(client, add_user):
     client.post("/login", data={'email': 'a@a.com', 'password': '123La!'})
 
     # add a song
-    file = open("music.csv", 'rb')
-    client.post('/songs/upload', data={'file': file})
-    # delete the one of the two songs in the test csv
+    client.post('/song/new', data={'title': 'Armies', 'artist': 'KB', 'year': '2020', 'genre': 'Rap'})
+    # delete the song
     response = client.post('/song/1/delete')
     # assert that we get redirected to the browse page
     assert '/songs' in response.headers['Location']
     assert response.status_code == 302
 
-    # check that the first out of the two songs in the test csv was removed from the db
-    assert db.session.query(Song).count() == 1
+    # check that the song was removed from the db
+    assert db.session.query(Song).count() == 0
 
     response = client.get("/songs")
     # assert that we get the expected flash message
     assert b"Song Deleted" in response.data
+
+
+def test_add_transaction(client, add_user):
+    """Test that we can add transaction using the add transaction page"""
+    # login to be able to upload a csv
+    client.post("/login", data={'email': 'a@a.com', 'password': '123La!'})
+
+    # add a song
+    response = client.post('/song/new', data={'title': 'Armies', 'artist': 'KB', 'year': '2020', 'genre': 'Rap'})
+
+    # check that the song was added to the db
+    assert db.session.query(Song).count() == 1
+    transaction = Song.query.filter_by(title='Armies').first()
+    assert transaction.title == "Armies"
+    assert transaction.artist == "KB"
+    assert transaction.year == "2020"
+    assert transaction.genre == "Rap"
+
+    # assert that we get redirected to the browse  page
+    assert '/songs' in response.headers['Location']
+    assert response.status_code == 302
+
+    response = client.get("/songs")
+    # assert that we get the expected flash message
+    assert b"Song added successfully" in response.data

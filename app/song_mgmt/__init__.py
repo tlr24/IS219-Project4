@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, flash, url_for, redirect, current_
 from flask_login import login_required, current_user
 from app.db import db
 from app.db.models import Song, song_user
+from app.song_mgmt.forms import add_song_form
 
 
 song_mgmt = Blueprint('song_mgmt', __name__,
@@ -26,3 +27,14 @@ def delete_song(song_id):
     db.session.commit()
     flash('Song Deleted', 'success')
     return redirect(url_for('songs.browse_songs'), 302)
+
+@song_mgmt.route('/song/new', methods=['POST', 'GET'])
+@login_required
+def add_song():
+    form = add_song_form()
+    if form.validate_on_submit():
+        current_user.songs.append(Song(title=form.title.data, artist=form.artist.data, year=form.year.data, genre=form.genre.data))#user_id=current_user.id))
+        db.session.commit()
+        flash('Song added successfully', 'success')
+        return redirect(url_for('songs.browse_songs'), 302)
+    return render_template('song_add.html', form=form)
