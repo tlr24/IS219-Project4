@@ -11,7 +11,7 @@
 
         <h2>Browse: Songs</h2>
         {{ render_table(data,show_actions=True, table_classes='table-striped', header_classes='thead-dark', responsive=True, responsive_class='table-responsive-sm', model=Song,
-            view_url=retrieve_url) }}
+            view_url=retrieve_url,delete_url=delete_url,new_url=new_url,edit_url=edit_url) }}
         {% from 'bootstrap5/pagination.html' import render_pagination %}
 
         {{ render_pagination(pagination) }}
