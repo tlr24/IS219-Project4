@@ -62,10 +62,9 @@ def logout():
     logout_user()
     return redirect(url_for('auth.login'))
 
-@auth.route('/dashboard', methods=['GET'], defaults={"page": 1})
-@auth.route('/dashboard/<int:page>', methods=['GET'])
+@auth.route('/dashboard', methods=['GET'])
 @login_required
-def dashboard(page):
+def dashboard():
     data = current_user.songs
     titles = [('title', 'Title'), ('artist', 'Artist'), ('year', 'Year'), ('genre', 'Genre')]
     view_url = ('song_mgmt.retrieve_song', [('song_id', ':id')])

@@ -9,6 +9,7 @@ from app.db import db
 from app.db.models import Song
 from app.songs.forms import csv_upload
 from app import config
+from app.user_mgmt.decorators import admin_required
 
 song = Blueprint('songs', __name__, template_folder='templates')
 
@@ -41,7 +42,7 @@ def song_upload():
                     current_user.songs.append(song)
                     db.session.commit()
 
-        return redirect(url_for('songs.browse_songs'), 302)
+        return redirect(url_for('auth.dashboard'), 302)
     try:
         return render_template('upload_songs.html', form=form)
     except TemplateNotFound:
@@ -50,6 +51,7 @@ def song_upload():
 @song.route('/songs', methods=['GET'], defaults={"page": 1})
 @song.route('/songs/<int:page>', methods=['GET'])
 @login_required
+@admin_required
 def browse_songs(page):
     page = page
     per_page = 1000
