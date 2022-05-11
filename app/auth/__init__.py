@@ -3,7 +3,7 @@ from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash
 from jinja2 import TemplateNotFound
 from app.db import db
-from app.db.models import User
+from app.db.models import User, Song
 from app.auth.forms import register_form, login_form, profile_form, account_form
 
 auth = Blueprint('auth', __name__, template_folder='templates')
@@ -62,13 +62,14 @@ def logout():
     logout_user()
     return redirect(url_for('auth.login'))
 
-@auth.route('/dashboard', methods=['GET'], defaults={"page": 1})
-@auth.route('/dashboard/<int:page>', methods=['GET'])
+@auth.route('/dashboard', methods=['GET'])
 @login_required
-def dashboard(page):
+def dashboard():
     data = current_user.songs
+    titles = [('title', 'Title'), ('artist', 'Artist'), ('year', 'Year'), ('genre', 'Genre')]
+    view_url = ('song_mgmt.retrieve_song', [('song_id', ':id')])
     try:
-        return render_template('dashboard.html', data=data)
+        return render_template('dashboard.html', data=data, retrieve_url=view_url, Song=Song, titles=titles)
     except TemplateNotFound:
         abort(404)
 

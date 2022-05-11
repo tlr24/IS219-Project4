@@ -47,7 +47,7 @@ def test_upload_csv(client, add_user, write_test_csv):
     file = open("music.csv", 'rb')
     # upload the csv
     response = client.post('/songs/upload', data={'file': file})
-    assert "/songs" in response.headers["Location"]
+    assert "/dashboard" in response.headers["Location"]
     assert response.status_code == 302
 
     root = os.path.dirname(os.path.abspath(__file__))

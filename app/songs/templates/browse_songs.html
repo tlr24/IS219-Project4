@@ -10,7 +10,7 @@
                 <a href="{{ url_for("songs.song_upload") }}" class="btn col-3 mb-5 btn-info" role="button">Upload Songs</a>
 
         <h2>Browse: Songs</h2>
-        {{ render_table(data,show_actions=True, table_classes='table-striped', header_classes='thead-dark', responsive=True, responsive_class='table-responsive-sm', model=Song,
+        {{ render_table(data,titles,show_actions=True, table_classes='table-striped', header_classes='thead-dark', responsive=True, responsive_class='table-responsive-sm', model=Song,
             view_url=retrieve_url,delete_url=delete_url,new_url=new_url,edit_url=edit_url) }}
         {% from 'bootstrap5/pagination.html' import render_pagination %}
 

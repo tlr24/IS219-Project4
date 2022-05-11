@@ -9,6 +9,7 @@ from app.db import db
 from app.db.models import Song
 from app.songs.forms import csv_upload
 from app import config
+from app.user_mgmt.decorators import admin_required
 
 song = Blueprint('songs', __name__, template_folder='templates')
 
@@ -41,7 +42,7 @@ def song_upload():
                     current_user.songs.append(song)
                     db.session.commit()
 
-        return redirect(url_for('songs.browse_songs'), 302)
+        return redirect(url_for('auth.dashboard'), 302)
     try:
         return render_template('upload_songs.html', form=form)
     except TemplateNotFound:
@@ -50,16 +51,18 @@ def song_upload():
 @song.route('/songs', methods=['GET'], defaults={"page": 1})
 @song.route('/songs/<int:page>', methods=['GET'])
 @login_required
+@admin_required
 def browse_songs(page):
     page = page
     per_page = 1000
     pagination = Song.query.paginate(page, per_page, error_out=False)
+    titles = [('title', 'Title'), ('artist', 'Artist'), ('year', 'Year'), ('genre', 'Genre')]
     retrieve_url = ('song_mgmt.retrieve_song', [('song_id', ':id')])
     delete_url = ('song_mgmt.delete_song', [('song_id', ':id')])
     new_url = 'song_mgmt.add_song'
     edit_url = ('song_mgmt.edit_song', [('song_id', ':id')])
     data = pagination.items
     try:
-        return render_template('browse_songs.html',data=data,pagination=pagination,retrieve_url=retrieve_url,delete_url=delete_url,new_url=new_url,edit_url=edit_url,Song=Song)
+        return render_template('browse_songs.html',data=data,titles=titles,pagination=pagination,retrieve_url=retrieve_url,delete_url=delete_url,new_url=new_url,edit_url=edit_url,Song=Song)
     except TemplateNotFound:
         abort(404)
